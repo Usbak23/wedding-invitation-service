@@ -152,6 +152,7 @@ analytics
 |---|---|---|---|
 | POST | `/api/auth/register` | ❌ | Register user baru |
 | POST | `/api/auth/login` | ❌ | Login, return JWT token |
+| POST | `/api/auth/logout` | ✅ | Logout user |
 | GET | `/api/auth/me` | ✅ | Data user yang sedang login |
 
 ### Invitations

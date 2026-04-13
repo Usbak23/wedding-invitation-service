@@ -37,4 +37,12 @@ export class AuthController {
     const data = await this.authService.me(req.user.id);
     return successResponse(data);
   }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Logout user' })
+  async logout() {
+    return successResponse(null, 'Logout successful');
+  }
 }
