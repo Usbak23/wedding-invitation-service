@@ -5,6 +5,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GuestService } from '../services/guest.service';
 import { CreateGuestDto, BulkCreateGuestDto } from '../validators/guest.dto';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
+import { ParseUuidPipe } from '../middlewares/parse-uuid.pipe';
 import { successResponse } from '../helpers/response.helper';
 
 @ApiTags('Guests')
@@ -16,7 +17,7 @@ export class GuestController {
 
   @Get()
   @ApiOperation({ summary: 'List semua tamu undangan' })
-  async findAll(@Param('invitationId') invitationId: string, @Req() req: any) {
+  async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Req() req: any) {
     const data = await this.guestService.findAll(invitationId, req.user.id);
     return successResponse(data);
   }
@@ -24,7 +25,7 @@ export class GuestController {
   @Post()
   @ApiOperation({ summary: 'Tambah tamu baru' })
   async create(
-    @Param('invitationId') invitationId: string,
+    @Param('invitationId', ParseUuidPipe) invitationId: string,
     @Body() dto: CreateGuestDto,
     @Req() req: any,
   ) {
@@ -35,7 +36,7 @@ export class GuestController {
   @Post('bulk')
   @ApiOperation({ summary: 'Tambah banyak tamu sekaligus' })
   async bulkCreate(
-    @Param('invitationId') invitationId: string,
+    @Param('invitationId', ParseUuidPipe) invitationId: string,
     @Body() dto: BulkCreateGuestDto,
     @Req() req: any,
   ) {
@@ -45,14 +46,14 @@ export class GuestController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update data tamu' })
-  async update(@Param('id') id: string, @Body() dto: CreateGuestDto) {
+  async update(@Param('id', ParseUuidPipe) id: string, @Body() dto: CreateGuestDto) {
     const data = await this.guestService.update(id, dto);
     return successResponse(data, 'Guest updated');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Hapus tamu' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', ParseUuidPipe) id: string) {
     await this.guestService.delete(id);
     return successResponse(null, 'Guest deleted');
   }

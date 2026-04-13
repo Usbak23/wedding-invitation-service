@@ -5,6 +5,8 @@ import pg from 'pg';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 import { setupSwagger } from './routes/swagger.route';
+import { GlobalExceptionFilter } from './middlewares/exception.filter';
+import { AppLogger } from './middlewares/app-logger';
 
 dotenv.config();
 
@@ -46,10 +48,12 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create<NestApplication>(AppModule, {
-    logger: ['log', 'warn', 'error'],
+    logger: new AppLogger(),
   });
 
   app.use(helmet());
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),

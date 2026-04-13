@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminService } from '../services/admin.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { RolesGuard } from '../middlewares/roles.guard';
+import { ParseUuidPipe } from '../middlewares/parse-uuid.pipe';
 import { Roles } from '../helpers/roles.decorator';
 import { successResponse } from '../helpers/response.helper';
 
@@ -30,7 +31,7 @@ export class AdminController {
 
   @Delete('users/:id')
   @ApiOperation({ summary: 'Hapus user (admin only)' })
-  async deleteUser(@Param('id') id: string) {
+  async deleteUser(@Param('id', ParseUuidPipe) id: string) {
     await this.adminService.deleteUser(id);
     return successResponse(null, 'User deleted');
   }

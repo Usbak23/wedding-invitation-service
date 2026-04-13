@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/comm
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AnalyticsService } from '../services/analytics.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
+import { ParseUuidPipe } from '../middlewares/parse-uuid.pipe';
 import { CreateAnalyticDto } from '../validators/analytic.dto';
 import { successResponse } from '../helpers/response.helper';
 
@@ -13,7 +14,7 @@ export class AnalyticsController {
   @Post('track/:invitationId')
   @ApiOperation({ summary: 'Track event undangan (public)' })
   async track(
-    @Param('invitationId') invitationId: string,
+    @Param('invitationId', ParseUuidPipe) invitationId: string,
     @Body() dto: CreateAnalyticDto,
     @Req() req: any,
   ) {
@@ -25,7 +26,7 @@ export class AnalyticsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Ringkasan analytics undangan' })
-  async summary(@Param('invitationId') invitationId: string) {
+  async summary(@Param('invitationId', ParseUuidPipe) invitationId: string) {
     const data = await this.analyticsService.getSummary(invitationId);
     return successResponse(data);
   }

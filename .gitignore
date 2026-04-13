@@ -48,6 +48,10 @@ lerna-debug.log*
 !src/uploads/.gitkeep
 !src/downloads/.gitkeep
 
+# logs
+/logs/*
+!logs/.gitkeep
+
 # temp directory
 .temp
 .tmp
