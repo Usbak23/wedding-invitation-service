@@ -21,6 +21,9 @@ export class InvitationRepository {
     return this.repo.findOne({
       where: { id },
       relations: ['user', 'guests', 'galleries'],
+      select: {
+        user: { id: true, name: true, email: true, role: true },
+      },
     });
   }
 
@@ -34,6 +37,9 @@ export class InvitationRepository {
   findByIdAndUser(id: string, userId: string) {
     return this.repo.findOne({
       where: { id, user: { id: userId } },
+      select: {
+        user: { id: true },
+      },
     });
   }
 
