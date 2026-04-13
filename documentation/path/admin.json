@@ -1,0 +1,77 @@
+{
+  "paths": {
+    "/api/admin/dashboard": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Statistik sistem (admin only)",
+        "operationId": "adminDashboard",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Statistik sistem",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "totalUsers": 50,
+                    "totalInvitations": 120,
+                    "published": 95,
+                    "draft": 25
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Access denied" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "List semua user (admin only)",
+        "operationId": "adminGetUsers",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "List user" },
+          "403": { "description": "Access denied" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/admin/users/{id}": {
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Hapus user (admin only)",
+        "operationId": "adminDeleteUser",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "User berhasil dihapus" },
+          "403": { "description": "Access denied" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/admin/invitations": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "List semua undangan (admin only)",
+        "operationId": "adminGetInvitations",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "List semua undangan" },
+          "403": { "description": "Access denied" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  }
+}

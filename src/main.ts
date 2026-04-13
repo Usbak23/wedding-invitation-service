@@ -1,8 +1,10 @@
 import { NestFactory, NestApplication } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import helmet from 'helmet';
 import pg from 'pg';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
+import { setupSwagger } from './routes/swagger.route';
 
 dotenv.config();
 
@@ -47,11 +49,19 @@ async function bootstrap() {
     logger: ['log', 'warn', 'error'],
   });
 
+  app.use(helmet());
+
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
 
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
+  setupSwagger(app);
 
   const port = process.env.APP_PORT || 3000;
   await app.listen(port);

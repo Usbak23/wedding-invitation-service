@@ -1,0 +1,68 @@
+{
+  "paths": {
+    "/api/public/{slug}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Halaman publik undangan berdasarkan slug",
+        "operationId": "publicGetBySlug",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "slug", "required": true, "type": "string", "example": "ahmad-siti-jc6hp" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data undangan publik",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "id": "4a3bf159-70dd-4b30-abd6-aeee740d20bc",
+                    "slug": "ahmad-siti-jc6hp",
+                    "groom_name": "Ahmad",
+                    "bride_name": "Siti",
+                    "akad_date": "2026-06-01T08:00:00.000Z",
+                    "akad_location": "Masjid Al-Ikhlas, Jakarta",
+                    "resepsi_date": "2026-06-01T11:00:00.000Z",
+                    "resepsi_location": "Gedung Serbaguna, Jakarta",
+                    "status": "published"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Invitation not found" }
+        }
+      }
+    },
+    "/api/public/{slug}/guests/{code}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Data tamu personal berdasarkan kode undangan",
+        "operationId": "publicGetGuestByCode",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "slug", "required": true, "type": "string", "example": "ahmad-siti-jc6hp" },
+          { "in": "path", "name": "code", "required": true, "type": "string", "example": "0FYYBNM9" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data tamu dan undangan",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "invitation": { "slug": "ahmad-siti-jc6hp", "groom_name": "Ahmad", "bride_name": "Siti" },
+                    "guest": { "name": "Budi Santoso", "code": "0FYYBNM9" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Guest not found" }
+        }
+      }
+    }
+  }
+}

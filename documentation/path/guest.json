@@ -1,0 +1,136 @@
+{
+  "paths": {
+    "/api/invitations/{invitationId}/guests": {
+      "get": {
+        "tags": ["Guests"],
+        "summary": "List semua tamu undangan",
+        "operationId": "guestFindAll",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "List tamu" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "post": {
+        "tags": ["Guests"],
+        "summary": "Tambah tamu baru",
+        "operationId": "guestCreate",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string", "example": "Budi Santoso" },
+                "phone": { "type": "string", "example": "08123456789" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Tamu berhasil ditambahkan",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "id": "ca7fea1a-6aa9-4dd1-83ab-d0fd0a3a39b7",
+                    "name": "Budi Santoso",
+                    "code": "0FYYBNM9",
+                    "phone": "08123456789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{invitationId}/guests/bulk": {
+      "post": {
+        "tags": ["Guests"],
+        "summary": "Tambah banyak tamu sekaligus",
+        "operationId": "guestBulkCreate",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "guests": {
+                  "type": "array",
+                  "example": [
+                    { "name": "Budi Santoso", "phone": "08123456789" },
+                    { "name": "Ani Rahayu", "phone": "08987654321" }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Tamu berhasil ditambahkan" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{invitationId}/guests/{id}": {
+      "put": {
+        "tags": ["Guests"],
+        "summary": "Update data tamu",
+        "operationId": "guestUpdate",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          { "in": "path", "name": "id", "required": true, "type": "string" },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "phone": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Tamu berhasil diupdate" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": {
+        "tags": ["Guests"],
+        "summary": "Hapus tamu",
+        "operationId": "guestDelete",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Tamu berhasil dihapus" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  }
+}

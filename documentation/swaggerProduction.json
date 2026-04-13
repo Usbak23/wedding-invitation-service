@@ -1,0 +1,29 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Wedding Invitation Digital API Documentation - Production",
+    "version": "1.0.0",
+    "title": "Wedding Invitation API"
+  },
+  "host": "wedding-invitation.com",
+  "basePath": "/",
+  "schemes": ["https"],
+  "tags": [
+    { "name": "Auth", "description": "Autentikasi user" },
+    { "name": "Invitations", "description": "Manajemen undangan" },
+    { "name": "Guests", "description": "Manajemen tamu undangan" },
+    { "name": "RSVP", "description": "Konfirmasi kehadiran tamu" },
+    { "name": "Gallery", "description": "Foto undangan" },
+    { "name": "Analytics", "description": "Statistik & tracking undangan" },
+    { "name": "Public", "description": "Halaman publik undangan" },
+    { "name": "Admin", "description": "Panel admin sistem" }
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Masukkan token dengan format: Bearer {token}"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "paths": {
+    "/api/analytics/track/{invitationId}": {
+      "post": {
+        "tags": ["Analytics"],
+        "summary": "Track event undangan (public)",
+        "operationId": "analyticsTrack",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "event": { "type": "string", "enum": ["view", "rsvp_open", "share"], "example": "view" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Event berhasil ditrack" }
+        }
+      }
+    },
+    "/api/analytics/summary/{invitationId}": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Ringkasan analytics undangan",
+        "operationId": "analyticsSummary",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ringkasan analytics",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "views": 120,
+                    "rsvp_opens": 45,
+                    "shares": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  }
+}

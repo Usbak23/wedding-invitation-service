@@ -1,0 +1,51 @@
+{
+  "paths": {
+    "/api/invitations/{invitationId}/gallery": {
+      "get": {
+        "tags": ["Gallery"],
+        "summary": "List foto gallery undangan",
+        "operationId": "galleryFindAll",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "List foto gallery" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "post": {
+        "tags": ["Gallery"],
+        "summary": "Upload foto ke gallery",
+        "operationId": "galleryUpload",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          { "in": "formData", "name": "photo", "type": "file", "required": true, "description": "File foto (jpg/png/webp, max 5MB)" },
+          { "in": "formData", "name": "caption", "type": "string", "description": "Keterangan foto" }
+        ],
+        "responses": {
+          "201": { "description": "Foto berhasil diupload" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{invitationId}/gallery/{id}": {
+      "delete": {
+        "tags": ["Gallery"],
+        "summary": "Hapus foto dari gallery",
+        "operationId": "galleryDelete",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "invitationId", "required": true, "type": "string" },
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Foto berhasil dihapus" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  }
+}

@@ -2,6 +2,8 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import appConfig from './configs/app.config';
 import databaseConfig from './configs/database.config';
@@ -28,6 +30,10 @@ import { AdminModule } from './routes/admin.module';
       rootPath: join(__dirname, '..', 'src', 'uploads'),
       serveRoot: '/uploads',
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,   // 1 menit
+      limit: 60,    // max 60 request per menit (global)
+    }]),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -38,7 +44,7 @@ import { AdminModule } from './routes/admin.module';
         password: config.get('database.password'),
         database: config.get('database.name'),
         entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic],
-        synchronize: config.get('app.env') === 'development',
+        synchronize: config.get('app.env') !== 'production',
         logging: false,
       }),
     }),
@@ -46,6 +52,9 @@ import { AdminModule } from './routes/admin.module';
     InvitationModule,
     GalleryModule,
     AdminModule,
+  ],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule implements NestModule {

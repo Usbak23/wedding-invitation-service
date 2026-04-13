@@ -1,0 +1,170 @@
+{
+  "paths": {
+    "/api/invitations": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "List semua undangan milik user",
+        "operationId": "invitationFindAll",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "List undangan" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Buat undangan baru",
+        "operationId": "invitationCreate",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["groom_name", "bride_name"],
+              "properties": {
+                "groom_name": { "type": "string", "example": "Ahmad" },
+                "bride_name": { "type": "string", "example": "Siti" },
+                "akad_date": { "type": "string", "example": "2026-06-01T08:00:00Z" },
+                "akad_location": { "type": "string", "example": "Masjid Al-Ikhlas, Jakarta" },
+                "resepsi_date": { "type": "string", "example": "2026-06-01T11:00:00Z" },
+                "resepsi_location": { "type": "string", "example": "Gedung Serbaguna, Jakarta" },
+                "custom_message": { "type": "string", "example": "Bersama keluarga besar kami mengundang kehadiran Anda" },
+                "template": { "type": "string", "example": "default" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Undangan berhasil dibuat" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{id}": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Detail undangan",
+        "operationId": "invitationFindOne",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string", "example": "4a3bf159-70dd-4b30-abd6-aeee740d20bc" }
+        ],
+        "responses": {
+          "200": { "description": "Detail undangan" },
+          "404": { "description": "Invitation not found" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "put": {
+        "tags": ["Invitations"],
+        "summary": "Update undangan",
+        "operationId": "invitationUpdate",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string" },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "groom_name": { "type": "string" },
+                "bride_name": { "type": "string" },
+                "akad_date": { "type": "string" },
+                "akad_location": { "type": "string" },
+                "resepsi_date": { "type": "string" },
+                "resepsi_location": { "type": "string" },
+                "custom_message": { "type": "string" },
+                "template": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Undangan berhasil diupdate" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": {
+        "tags": ["Invitations"],
+        "summary": "Hapus undangan",
+        "operationId": "invitationDelete",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Undangan berhasil dihapus" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{id}/publish": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Publish undangan dan generate slug unik",
+        "operationId": "invitationPublish",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Undangan berhasil dipublish",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "example": true },
+                "data": {
+                  "example": {
+                    "slug": "ahmad-siti-jc6hp",
+                    "status": "published"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/invitations/{id}/stats": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Statistik RSVP undangan",
+        "operationId": "invitationStats",
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistik RSVP",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": {
+                    "total_guests": 10,
+                    "total_rsvp": 7,
+                    "belum_rsvp": 3,
+                    "hadir": 5,
+                    "tidak": 1,
+                    "mungkin": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  }
+}
