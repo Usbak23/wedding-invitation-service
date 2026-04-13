@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards,
+  Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { InvitationService } from '../services/invitation.service';
@@ -40,6 +40,13 @@ export class InvitationController {
   @Put(':id')
   @ApiOperation({ summary: 'Update undangan' })
   async update(@Param('id', ParseUuidPipe) id: string, @Body() dto: UpdateInvitationDto, @Req() req: any) {
+    const data = await this.invitationService.update(id, dto, req.user.id);
+    return successResponse(data, 'Invitation updated');
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Partial update undangan' })
+  async patch(@Param('id', ParseUuidPipe) id: string, @Body() dto: UpdateInvitationDto, @Req() req: any) {
     const data = await this.invitationService.update(id, dto, req.user.id);
     return successResponse(data, 'Invitation updated');
   }
