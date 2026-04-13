@@ -1,0 +1,51 @@
+import {
+  Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards,
+} from '@nestjs/common';
+import { GuestService } from '../services/guest.service';
+import { CreateGuestDto, BulkCreateGuestDto } from '../validators/guest.dto';
+import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
+import { successResponse } from '../helpers/response.helper';
+
+@Controller('api/invitations/:invitationId/guests')
+@UseGuards(JwtAuthGuard)
+export class GuestController {
+  constructor(private readonly guestService: GuestService) {}
+
+  @Get()
+  async findAll(@Param('invitationId') invitationId: string, @Req() req: any) {
+    const data = await this.guestService.findAll(invitationId, req.user.id);
+    return successResponse(data);
+  }
+
+  @Post()
+  async create(
+    @Param('invitationId') invitationId: string,
+    @Body() dto: CreateGuestDto,
+    @Req() req: any,
+  ) {
+    const data = await this.guestService.create(invitationId, dto, req.user.id);
+    return successResponse(data, 'Guest added');
+  }
+
+  @Post('bulk')
+  async bulkCreate(
+    @Param('invitationId') invitationId: string,
+    @Body() dto: BulkCreateGuestDto,
+    @Req() req: any,
+  ) {
+    const data = await this.guestService.bulkCreate(invitationId, dto, req.user.id);
+    return successResponse(data, `${data.length} guests added`);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() dto: CreateGuestDto) {
+    const data = await this.guestService.update(id, dto);
+    return successResponse(data, 'Guest updated');
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    await this.guestService.delete(id);
+    return successResponse(null, 'Guest deleted');
+  }
+}
