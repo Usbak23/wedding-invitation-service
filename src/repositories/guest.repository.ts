@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Guest } from '../models/guest.model';
+import { getPaginationOptions, PaginationQuery } from '../utils/pagination.util';
 
 @Injectable()
 export class GuestRepository {
@@ -10,12 +11,20 @@ export class GuestRepository {
     private readonly repo: Repository<Guest>,
   ) {}
 
-  findAllByInvitation(invitationId: string) {
-    return this.repo.find({
+  async findAllByInvitation(invitationId: string, pagination: PaginationQuery) {
+    const { skip, limit } = getPaginationOptions(pagination);
+    const [data, total] = await this.repo.findAndCount({
       where: { invitation: { id: invitationId } },
       relations: ['rsvp'],
       order: { created_at: 'DESC' },
+      skip,
+      take: limit,
     });
+    return { data, total };
+  }
+
+  countByInvitation(invitationId: string) {
+    return this.repo.count({ where: { invitation: { id: invitationId } } });
   }
 
   findById(id: string) {

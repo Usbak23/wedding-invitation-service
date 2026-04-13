@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { RsvpRepository } from '../repositories/rsvp.repository';
 import { GuestRepository } from '../repositories/guest.repository';
 import { CreateRsvpDto } from '../validators/rsvp.dto';
+import { PaginationDto } from '../validators/pagination.dto';
+import { paginate } from '../utils/pagination.util';
 
 @Injectable()
 export class RsvpService {
@@ -33,7 +35,8 @@ export class RsvpService {
     });
   }
 
-  async findAll(invitationId: string) {
-    return this.rsvpRepo.findAllByInvitation(invitationId);
+  async findAll(invitationId: string, pagination: PaginationDto) {
+    const { data, total } = await this.rsvpRepo.findAllByInvitation(invitationId, pagination);
+    return { data, meta: paginate(total, pagination.page || 1, pagination.limit || 10) };
   }
 }

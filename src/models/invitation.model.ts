@@ -1,10 +1,13 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import type { InvitationStatus } from '../types/invitation-status.type';
 import { User } from './user.model';
 import { Guest } from './guest.model';
 import { Gallery } from './gallery.model';
 
 @Entity('invitations')
+@Index(['slug'])
+@Index(['status'])
+@Index(['user'])
 export class Invitation {
   @PrimaryGeneratedColumn('uuid')
   id: string;

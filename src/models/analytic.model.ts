@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Invitation } from './invitation.model';
 
 @Entity('analytics')
+@Index(['invitation'])
+@Index(['event'])
 export class Analytic {
   @PrimaryGeneratedColumn('uuid')
   id: string;

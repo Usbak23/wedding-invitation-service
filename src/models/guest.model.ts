@@ -1,15 +1,10 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Invitation } from './invitation.model';
 import { Rsvp } from './rsvp.model';
 
 @Entity('guests')
+@Index(['code'])
+@Index(['invitation'])
 export class Guest {
   @PrimaryGeneratedColumn('uuid')
   id: string;

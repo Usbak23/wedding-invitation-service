@@ -1,9 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import type { RsvpStatus } from '../types/rsvp-status.type';
 import { Guest } from './guest.model';
 import { Invitation } from './invitation.model';
 
 @Entity('rsvps')
+@Index(['invitation'])
+@Index(['status'])
 export class Rsvp {
   @PrimaryGeneratedColumn('uuid')
   id: string;

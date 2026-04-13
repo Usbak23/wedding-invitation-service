@@ -1,9 +1,10 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards,
+  Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { InvitationService } from '../services/invitation.service';
 import { CreateInvitationDto, UpdateInvitationDto } from '../validators/invitation.dto';
+import { PaginationDto } from '../validators/pagination.dto';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { ParseUuidPipe } from '../middlewares/parse-uuid.pipe';
 import { successResponse } from '../helpers/response.helper';
@@ -17,8 +18,8 @@ export class InvitationController {
 
   @Get()
   @ApiOperation({ summary: 'List semua undangan milik user' })
-  async findAll(@Req() req: any) {
-    const data = await this.invitationService.findAll(req.user.id);
+  async findAll(@Query() pagination: PaginationDto, @Req() req: any) {
+    const data = await this.invitationService.findAll(req.user.id, pagination);
     return successResponse(data);
   }
 

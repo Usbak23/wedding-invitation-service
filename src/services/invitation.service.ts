@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InvitationRepository } from '../repositories/invitation.repository';
 import { GuestRepository } from '../repositories/guest.repository';
 import { RsvpRepository } from '../repositories/rsvp.repository';
 import { CreateInvitationDto, UpdateInvitationDto } from '../validators/invitation.dto';
+import { PaginationDto } from '../validators/pagination.dto';
+import { paginate } from '../utils/pagination.util';
 import { generateSlug } from '../helpers/slug.helper';
 
 @Injectable()
@@ -13,8 +15,9 @@ export class InvitationService {
     private readonly rsvpRepo: RsvpRepository,
   ) {}
 
-  findAll(userId: string) {
-    return this.invitationRepo.findAllByUser(userId);
+  async findAll(userId: string, pagination: PaginationDto) {
+    const { data, total } = await this.invitationRepo.findAllByUser(userId, pagination);
+    return { data, meta: paginate(total, pagination.page || 1, pagination.limit || 10) };
   }
 
   async findOne(id: string, userId: string) {
@@ -55,7 +58,9 @@ export class InvitationService {
     if (!invitation) throw new NotFoundException('Invitation not found');
 
     let slug = generateSlug(invitation.groom_name, invitation.bride_name);
+    let attempts = 0;
     while (await this.invitationRepo.slugExists(slug)) {
+      if (++attempts > 10) throw new Error('Failed to generate unique slug');
       slug = generateSlug(invitation.groom_name, invitation.bride_name);
     }
 
@@ -67,12 +72,13 @@ export class InvitationService {
     const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
     if (!invitation) throw new NotFoundException('Invitation not found');
 
-    const guests = await this.guestRepo.findAllByInvitation(id);
-    const totalGuests = guests.length;
-    const totalRsvp = await this.rsvpRepo.countByInvitation(id);
-    const hadir = await this.rsvpRepo.countByInvitationAndStatus(id, 'hadir');
-    const tidak = await this.rsvpRepo.countByInvitationAndStatus(id, 'tidak');
-    const mungkin = await this.rsvpRepo.countByInvitationAndStatus(id, 'mungkin');
+    const [totalGuests, totalRsvp, hadir, tidak, mungkin] = await Promise.all([
+      this.guestRepo.countByInvitation(id),
+      this.rsvpRepo.countByInvitation(id),
+      this.rsvpRepo.countByInvitationAndStatus(id, 'hadir'),
+      this.rsvpRepo.countByInvitationAndStatus(id, 'tidak'),
+      this.rsvpRepo.countByInvitationAndStatus(id, 'mungkin'),
+    ]);
 
     return {
       total_guests: totalGuests,

@@ -1,9 +1,10 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards,
+  Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GuestService } from '../services/guest.service';
 import { CreateGuestDto, BulkCreateGuestDto } from '../validators/guest.dto';
+import { PaginationDto } from '../validators/pagination.dto';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { ParseUuidPipe } from '../middlewares/parse-uuid.pipe';
 import { successResponse } from '../helpers/response.helper';
@@ -17,8 +18,12 @@ export class GuestController {
 
   @Get()
   @ApiOperation({ summary: 'List semua tamu undangan' })
-  async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Req() req: any) {
-    const data = await this.guestService.findAll(invitationId, req.user.id);
+  async findAll(
+    @Param('invitationId', ParseUuidPipe) invitationId: string,
+    @Query() pagination: PaginationDto,
+    @Req() req: any,
+  ) {
+    const data = await this.guestService.findAll(invitationId, req.user.id, pagination);
     return successResponse(data);
   }
 
