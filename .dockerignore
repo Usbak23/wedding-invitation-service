@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+.env
+.env.*
+!.env.example
+src/uploads/*
+src/downloads/*
+logs
+*.log
+.git
+.gitignore
+README.md
+test.sh
