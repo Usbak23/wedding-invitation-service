@@ -32,7 +32,7 @@ export class GuestRepository {
   }
 
   findByCode(code: string) {
-    return this.repo.findOne({ where: { code }, relations: ['invitation'] });
+    return this.repo.findOne({ where: { code }, relations: ['invitation', 'rsvp'] });
   }
 
   create(data: Partial<Guest>) {
