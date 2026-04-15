@@ -30,12 +30,17 @@ export class Invitation {
   @Column({ nullable: true, type: 'text' })
   akad_location: string;
 
+  @Column({ nullable: true, type: 'text' })
+  akad_maps_url: string;
+
   @Column({ nullable: true })
   resepsi_date: Date;
 
   @Column({ nullable: true, type: 'text' })
   resepsi_location: string;
 
+  @Column({ nullable: true, type: 'text' })
+  resepsi_maps_url: string;
   @Column({ nullable: true })
   cover_photo: string;
 
