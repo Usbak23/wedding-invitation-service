@@ -3,6 +3,7 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 import { join } from 'path';
 
 const logDir = join(process.cwd(), 'logs');
+const isServerless = process.env.VERCEL === '1' || process.env.APP_ENV === 'production';
 
 const logFormat = format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -13,9 +14,12 @@ const logFormat = format.combine(
     })
 );
 
-export const fileLogger = createLogger({
-    format: logFormat,
-    transports: [
+const loggerTransports: any[] = [
+    new transports.Console({ format: logFormat })
+];
+
+if (!isServerless) {
+    loggerTransports.push(
         new DailyRotateFile({
             dirname: join(logDir, 'all'),
             filename: '%DATE%.log',
@@ -30,5 +34,10 @@ export const fileLogger = createLogger({
             maxFiles: '30d',
             level: 'error'
         })
-    ]
+    );
+}
+
+export const fileLogger = createLogger({
+    format: logFormat,
+    transports: loggerTransports
 });
