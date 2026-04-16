@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import type { Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto, LoginDto } from '../validators/auth.dto';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
 import { successResponse } from '../helpers/response.helper';
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  path: '/',
+};
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -24,9 +33,10 @@ export class AuthController {
   @Throttle({ default: { ttl: 60000, limit: 5 } })
   @ApiOperation({ summary: 'Login dan dapatkan JWT token' })
   @ApiBody({ type: LoginDto })
-  async login(@Body() dto: LoginDto) {
+  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const data = await this.authService.login(dto);
-    return successResponse(data, 'Login successful');
+    res.cookie('access_token', data.access_token, COOKIE_OPTIONS);
+    return successResponse({ access_token: data.access_token }, 'Login successful');
   }
 
   @Get('me')
@@ -42,7 +52,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Logout user' })
-  async logout() {
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', { path: '/' });
     return successResponse(null, 'Logout successful');
   }
 }

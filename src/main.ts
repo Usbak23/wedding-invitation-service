@@ -1,6 +1,7 @@
 import { NestFactory, NestApplication } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import pg from 'pg';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
@@ -52,6 +53,7 @@ async function bootstrap() {
   });
 
   app.use(helmet());
+  app.use(cookieParser());
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
@@ -60,9 +62,10 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:5173',
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3001',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   setupSwagger(app);
