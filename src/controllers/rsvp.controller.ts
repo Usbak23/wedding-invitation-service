@@ -10,24 +10,21 @@ import { successResponse } from '../helpers/response.helper';
 @ApiTags('RSVP')
 @Controller('api/rsvp')
 export class RsvpController {
-  constructor(private readonly rsvpService: RsvpService) {}
+    constructor(private readonly rsvpService: RsvpService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Submit RSVP dari tamu (public)' })
-  async submit(@Body() dto: CreateRsvpDto) {
-    const data = await this.rsvpService.submit(dto);
-    return successResponse(data, 'RSVP submitted');
-  }
+    @Post()
+    @ApiOperation({ summary: 'Submit RSVP dari tamu (public)' })
+    async submit(@Body() dto: CreateRsvpDto) {
+        const data = await this.rsvpService.submit(dto);
+        return successResponse(data, 'RSVP submitted');
+    }
 
-  @Get('invitation/:invitationId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'List semua RSVP per undangan' })
-  async findAll(
-    @Param('invitationId', ParseUuidPipe) invitationId: string,
-    @Query() pagination: PaginationDto,
-  ) {
-    const data = await this.rsvpService.findAll(invitationId, pagination);
-    return successResponse(data);
-  }
+    @Get('invitation/:invitationId')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
+    @ApiOperation({ summary: 'List semua RSVP per undangan' })
+    async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Query() pagination: PaginationDto) {
+        const data = await this.rsvpService.findAll(invitationId, pagination);
+        return successResponse(data);
+    }
 }

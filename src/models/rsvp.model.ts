@@ -7,25 +7,25 @@ import { Invitation } from './invitation.model';
 @Index(['invitation'])
 @Index(['status'])
 export class Rsvp {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @OneToOne(() => Guest, (guest) => guest.rsvp, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  guest: Guest;
+    @OneToOne(() => Guest, (guest) => guest.rsvp, { onDelete: 'CASCADE' })
+    @JoinColumn()
+    guest: Guest;
 
-  @ManyToOne(() => Invitation, { onDelete: 'CASCADE' })
-  invitation: Invitation;
+    @ManyToOne(() => Invitation, { onDelete: 'CASCADE' })
+    invitation: Invitation;
 
-  @Column()
-  status: RsvpStatus;
+    @Column()
+    status: RsvpStatus;
 
-  @Column({ default: 1 })
-  total_persons: number;
+    @Column({ default: 1 })
+    total_persons: number;
 
-  @Column({ nullable: true, type: 'text' })
-  message: string;
+    @Column({ nullable: true, type: 'text' })
+    message: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @CreateDateColumn()
+    created_at: Date;
 }

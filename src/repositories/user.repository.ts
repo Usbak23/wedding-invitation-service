@@ -5,20 +5,20 @@ import { User } from '../models/user.model';
 
 @Injectable()
 export class UserRepository {
-  constructor(
-    @InjectRepository(User)
-    private readonly repo: Repository<User>,
-  ) {}
+    constructor(
+        @InjectRepository(User)
+        private readonly repo: Repository<User>
+    ) {}
 
-  findByEmail(email: string) {
-    return this.repo.findOne({ where: { email } });
-  }
+    findByEmail(email: string) {
+        return this.repo.findOne({ where: { email } });
+    }
 
-  findById(id: string) {
-    return this.repo.findOne({ where: { id } });
-  }
+    findById(id: string) {
+        return this.repo.findOne({ where: { id } });
+    }
 
-  create(data: Partial<User>) {
-    return this.repo.save(this.repo.create(data));
-  }
+    create(data: Partial<User>) {
+        return this.repo.save(this.repo.create(data));
+    }
 }

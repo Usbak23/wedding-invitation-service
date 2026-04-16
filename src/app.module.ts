@@ -21,44 +21,44 @@ import { GalleryModule } from './routes/gallery.module';
 import { AdminModule } from './routes/admin.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig],
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'src', 'uploads'),
-      serveRoot: '/uploads',
-    }),
-    ThrottlerModule.forRoot([{
-      ttl: 60000,   // 1 menit
-      limit: 60,    // max 60 request per menit (global)
-    }]),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('database.host'),
-        port: config.get('database.port'),
-        username: config.get('database.username'),
-        password: config.get('database.password'),
-        database: config.get('database.name'),
-        entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic],
-        synchronize: config.get('app.env') !== 'production',
-        logging: false,
-      }),
-    }),
-    AuthModule,
-    InvitationModule,
-    GalleryModule,
-    AdminModule,
-  ],
-  providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-  ],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [appConfig, databaseConfig, jwtConfig]
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'src', 'uploads'),
+            serveRoot: '/uploads'
+        }),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 60000, // 1 menit
+                limit: 60 // max 60 request per menit (global)
+            }
+        ]),
+        TypeOrmModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                type: 'postgres',
+                host: config.get('database.host'),
+                port: config.get('database.port'),
+                username: config.get('database.username'),
+                password: config.get('database.password'),
+                database: config.get('database.name'),
+                entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic],
+                synchronize: config.get('app.env') !== 'production',
+                logging: false
+            })
+        }),
+        AuthModule,
+        InvitationModule,
+        GalleryModule,
+        AdminModule
+    ],
+    providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }]
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
 }

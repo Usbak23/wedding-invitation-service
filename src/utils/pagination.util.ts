@@ -1,27 +1,27 @@
 export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
 }
 
 export interface PaginationQuery {
-  page?: number;
-  limit?: number;
+    page?: number;
+    limit?: number;
 }
 
 export function getPaginationOptions(query: PaginationQuery) {
-  const page = Math.max(1, query.page || 1);
-  const limit = Math.min(100, Math.max(1, query.limit || 10));
-  const skip = (page - 1) * limit;
-  return { page, limit, skip };
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.min(100, Math.max(1, query.limit || 10));
+    const skip = (page - 1) * limit;
+    return { page, limit, skip };
 }
 
 export function paginate(total: number, page: number, limit: number): PaginationMeta {
-  return {
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  };
+    return {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+    };
 }

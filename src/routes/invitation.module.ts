@@ -18,11 +18,8 @@ import { RsvpController } from '../controllers/rsvp.controller';
 import { PublicController } from '../controllers/public.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Invitation, Guest, Rsvp, Analytic])],
-  controllers: [InvitationController, GuestController, RsvpController, PublicController],
-  providers: [
-    InvitationService, GuestService, RsvpService, PublicService,
-    InvitationRepository, GuestRepository, RsvpRepository, AnalyticRepository,
-  ],
+    imports: [TypeOrmModule.forFeature([Invitation, Guest, Rsvp, Analytic])],
+    controllers: [InvitationController, GuestController, RsvpController, PublicController],
+    providers: [InvitationService, GuestService, RsvpService, PublicService, InvitationRepository, GuestRepository, RsvpRepository, AnalyticRepository]
 })
 export class InvitationModule {}

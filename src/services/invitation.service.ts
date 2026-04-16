@@ -9,84 +9,87 @@ import { generateSlug } from '../helpers/slug.helper';
 
 @Injectable()
 export class InvitationService {
-  constructor(
-    private readonly invitationRepo: InvitationRepository,
-    private readonly guestRepo: GuestRepository,
-    private readonly rsvpRepo: RsvpRepository,
-  ) {}
+    constructor(
+        private readonly invitationRepo: InvitationRepository,
+        private readonly guestRepo: GuestRepository,
+        private readonly rsvpRepo: RsvpRepository
+    ) {}
 
-  async findAll(userId: string, pagination: PaginationDto) {
-    const { data, total } = await this.invitationRepo.findAllByUser(userId, pagination);
-    return { data, meta: paginate(total, pagination.page || 1, pagination.limit || 10) };
-  }
-
-  async findOne(id: string, userId: string) {
-    const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
-    if (!invitation) throw new NotFoundException('Invitation not found');
-    return invitation;
-  }
-
-  create(dto: CreateInvitationDto, userId: string) {
-    return this.invitationRepo.create({
-      ...dto,
-      akad_date: dto.akad_date ? new Date(dto.akad_date) : undefined,
-      resepsi_date: dto.resepsi_date ? new Date(dto.resepsi_date) : undefined,
-      slug: `draft-${Date.now()}`,
-      user: { id: userId } as any,
-    });
-  }
-
-  async update(id: string, dto: UpdateInvitationDto, userId: string) {
-    const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
-    if (!invitation) throw new NotFoundException('Invitation not found');
-    await this.invitationRepo.update(id, {
-      ...dto,
-      akad_date: dto.akad_date ? new Date(dto.akad_date) : undefined,
-      resepsi_date: dto.resepsi_date ? new Date(dto.resepsi_date) : undefined,
-    });
-    return this.invitationRepo.findById(id);
-  }
-
-  async delete(id: string, userId: string) {
-    const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
-    if (!invitation) throw new NotFoundException('Invitation not found');
-    await this.invitationRepo.delete(id);
-  }
-
-  async publish(id: string, userId: string) {
-    const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
-    if (!invitation) throw new NotFoundException('Invitation not found');
-
-    let slug = generateSlug(invitation.groom_name, invitation.bride_name);
-    let attempts = 0;
-    while (await this.invitationRepo.slugExists(slug)) {
-      if (++attempts > 10) throw new Error('Failed to generate unique slug');
-      slug = generateSlug(invitation.groom_name, invitation.bride_name);
+    async findAll(userId: string, pagination: PaginationDto) {
+        const { data, total } = await this.invitationRepo.findAllByUser(userId, pagination);
+        return {
+            data,
+            meta: paginate(total, pagination.page || 1, pagination.limit || 10)
+        };
     }
 
-    await this.invitationRepo.update(id, { slug, status: 'published' });
-    return this.invitationRepo.findById(id);
-  }
+    async findOne(id: string, userId: string) {
+        const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
+        if (!invitation) throw new NotFoundException('Invitation not found');
+        return invitation;
+    }
 
-  async getStats(id: string, userId: string) {
-    const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
-    if (!invitation) throw new NotFoundException('Invitation not found');
+    create(dto: CreateInvitationDto, userId: string) {
+        return this.invitationRepo.create({
+            ...dto,
+            akad_date: dto.akad_date ? new Date(dto.akad_date) : undefined,
+            resepsi_date: dto.resepsi_date ? new Date(dto.resepsi_date) : undefined,
+            slug: `draft-${Date.now()}`,
+            user: { id: userId } as any
+        });
+    }
 
-    const [totalGuests, totalRsvp, hadir, tidak, mungkin] = await Promise.all([
-      this.guestRepo.countByInvitation(id),
-      this.rsvpRepo.countByInvitation(id),
-      this.rsvpRepo.countByInvitationAndStatus(id, 'hadir'),
-      this.rsvpRepo.countByInvitationAndStatus(id, 'tidak'),
-      this.rsvpRepo.countByInvitationAndStatus(id, 'mungkin'),
-    ]);
+    async update(id: string, dto: UpdateInvitationDto, userId: string) {
+        const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
+        if (!invitation) throw new NotFoundException('Invitation not found');
+        await this.invitationRepo.update(id, {
+            ...dto,
+            akad_date: dto.akad_date ? new Date(dto.akad_date) : undefined,
+            resepsi_date: dto.resepsi_date ? new Date(dto.resepsi_date) : undefined
+        });
+        return this.invitationRepo.findById(id);
+    }
 
-    return {
-      total_guests: totalGuests,
-      total_rsvp: totalRsvp,
-      belum_rsvp: totalGuests - totalRsvp,
-      hadir,
-      tidak,
-      mungkin,
-    };
-  }
+    async delete(id: string, userId: string) {
+        const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
+        if (!invitation) throw new NotFoundException('Invitation not found');
+        await this.invitationRepo.delete(id);
+    }
+
+    async publish(id: string, userId: string) {
+        const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
+        if (!invitation) throw new NotFoundException('Invitation not found');
+
+        let slug = generateSlug(invitation.groom_name, invitation.bride_name);
+        let attempts = 0;
+        while (await this.invitationRepo.slugExists(slug)) {
+            if (++attempts > 10) throw new Error('Failed to generate unique slug');
+            slug = generateSlug(invitation.groom_name, invitation.bride_name);
+        }
+
+        await this.invitationRepo.update(id, { slug, status: 'published' });
+        return this.invitationRepo.findById(id);
+    }
+
+    async getStats(id: string, userId: string) {
+        const invitation = await this.invitationRepo.findByIdAndUser(id, userId);
+        if (!invitation) throw new NotFoundException('Invitation not found');
+
+        const [totalGuests, totalRsvp, hadir, tidak, mungkin] = await Promise.all([
+            this.guestRepo.countByInvitation(id),
+            this.rsvpRepo.countByInvitation(id),
+            this.rsvpRepo.countByInvitationAndStatus(id, 'hadir'),
+            this.rsvpRepo.countByInvitationAndStatus(id, 'tidak'),
+            this.rsvpRepo.countByInvitationAndStatus(id, 'mungkin')
+        ]);
+
+        return {
+            total_guests: totalGuests,
+            total_rsvp: totalRsvp,
+            belum_rsvp: totalGuests - totalRsvp,
+            hadir,
+            tidak,
+            mungkin
+        };
+    }
 }

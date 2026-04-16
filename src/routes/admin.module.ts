@@ -8,8 +8,8 @@ import { AdminService } from '../services/admin.service';
 import { AdminController } from '../controllers/admin.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Invitation])],
-  controllers: [AdminController],
-  providers: [AdminService, AdminUserRepository, AdminInvitationRepository],
+    imports: [TypeOrmModule.forFeature([User, Invitation])],
+    controllers: [AdminController],
+    providers: [AdminService, AdminUserRepository, AdminInvitationRepository]
 })
 export class AdminModule {}

@@ -9,25 +9,21 @@ import { successResponse } from '../helpers/response.helper';
 @ApiTags('Analytics')
 @Controller('api/analytics')
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+    constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Post('track/:invitationId')
-  @ApiOperation({ summary: 'Track event undangan (public)' })
-  async track(
-    @Param('invitationId', ParseUuidPipe) invitationId: string,
-    @Body() dto: CreateAnalyticDto,
-    @Req() req: any,
-  ) {
-    await this.analyticsService.track(invitationId, dto.event, req);
-    return successResponse(null, 'Event tracked');
-  }
+    @Post('track/:invitationId')
+    @ApiOperation({ summary: 'Track event undangan (public)' })
+    async track(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: CreateAnalyticDto, @Req() req: any) {
+        await this.analyticsService.track(invitationId, dto.event, req);
+        return successResponse(null, 'Event tracked');
+    }
 
-  @Get('summary/:invitationId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Ringkasan analytics undangan' })
-  async summary(@Param('invitationId', ParseUuidPipe) invitationId: string) {
-    const data = await this.analyticsService.getSummary(invitationId);
-    return successResponse(data);
-  }
+    @Get('summary/:invitationId')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
+    @ApiOperation({ summary: 'Ringkasan analytics undangan' })
+    async summary(@Param('invitationId', ParseUuidPipe) invitationId: string) {
+        const data = await this.analyticsService.getSummary(invitationId);
+        return successResponse(data);
+    }
 }

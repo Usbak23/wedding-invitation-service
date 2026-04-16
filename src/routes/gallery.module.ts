@@ -12,9 +12,9 @@ import { GalleryController } from '../controllers/gallery.controller';
 import { AnalyticsController } from '../controllers/analytics.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Gallery, Analytic, Invitation])],
-  controllers: [GalleryController, AnalyticsController],
-  providers: [GalleryService, AnalyticsService, GalleryRepository, AnalyticRepository, InvitationRepository],
-  exports: [AnalyticRepository],
+    imports: [TypeOrmModule.forFeature([Gallery, Analytic, Invitation])],
+    controllers: [GalleryController, AnalyticsController],
+    providers: [GalleryService, AnalyticsService, GalleryRepository, AnalyticRepository, InvitationRepository],
+    exports: [AnalyticRepository]
 })
 export class GalleryModule {}

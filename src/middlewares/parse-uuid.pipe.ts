@@ -2,13 +2,12 @@ import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class ParseUuidPipe implements PipeTransform {
-  private readonly uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    private readonly uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  transform(value: string) {
-    if (!this.uuidRegex.test(value)) {
-      throw new BadRequestException(`Invalid UUID: "${value}"`);
+    transform(value: string) {
+        if (!this.uuidRegex.test(value)) {
+            throw new BadRequestException(`Invalid UUID: "${value}"`);
+        }
+        return value;
     }
-    return value;
-  }
 }

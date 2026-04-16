@@ -5,21 +5,21 @@ import { Invitation } from './invitation.model';
 @Index(['invitation'])
 @Index(['event'])
 export class Analytic {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @ManyToOne(() => Invitation, { onDelete: 'CASCADE' })
-  invitation: Invitation;
+    @ManyToOne(() => Invitation, { onDelete: 'CASCADE' })
+    invitation: Invitation;
 
-  @Column({ length: 50 })
-  event: string; // view | rsvp_open | share
+    @Column({ length: 50 })
+    event: string; // view | rsvp_open | share
 
-  @Column({ nullable: true, length: 50 })
-  ip_address: string;
+    @Column({ nullable: true, length: 50 })
+    ip_address: string;
 
-  @Column({ nullable: true, type: 'text' })
-  user_agent: string;
+    @Column({ nullable: true, type: 'text' })
+    user_agent: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+    @CreateDateColumn()
+    created_at: Date;
 }

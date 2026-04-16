@@ -5,23 +5,23 @@ import { User } from '../models/user.model';
 
 @Injectable()
 export class AdminUserRepository {
-  constructor(
-    @InjectRepository(User)
-    private readonly repo: Repository<User>,
-  ) {}
+    constructor(
+        @InjectRepository(User)
+        private readonly repo: Repository<User>
+    ) {}
 
-  findAll() {
-    return this.repo.find({
-      select: ['id', 'name', 'email', 'role', 'created_at'],
-      order: { created_at: 'DESC' },
-    });
-  }
+    findAll() {
+        return this.repo.find({
+            select: ['id', 'name', 'email', 'role', 'created_at'],
+            order: { created_at: 'DESC' }
+        });
+    }
 
-  count() {
-    return this.repo.count();
-  }
+    count() {
+        return this.repo.count();
+    }
 
-  delete(id: string) {
-    return this.repo.delete(id);
-  }
+    delete(id: string) {
+        return this.repo.delete(id);
+    }
 }

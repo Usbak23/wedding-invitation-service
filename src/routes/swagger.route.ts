@@ -18,34 +18,37 @@ const publicPath = require(path.resolve('./documentation/path/public.json'));
 const adminPath = require(path.resolve('./documentation/path/admin.json'));
 
 function getSwaggerBase(): SwaggerModel {
-  switch (process.env.SWAGGER_ENV) {
-    case 'staging': return swaggerStaging;
-    case 'production': return swaggerProduction;
-    default: return swaggerDev;
-  }
+    switch (process.env.SWAGGER_ENV) {
+        case 'staging':
+            return swaggerStaging;
+        case 'production':
+            return swaggerProduction;
+        default:
+            return swaggerDev;
+    }
 }
 
 export function setupSwagger(app: INestApplication): void {
-  const expressApp = app.getHttpAdapter().getInstance();
+    const expressApp = app.getHttpAdapter().getInstance();
 
-  expressApp.use('/api/docs', swaggerUi.serve);
-  expressApp.get(
-    '/api/docs',
-    (req: Request, _res: Response, next: NextFunction) => {
-      const swagger: SwaggerModel = { ...getSwaggerBase() };
-      swagger.paths = {
-        ...authPath.paths,
-        ...invitationPath.paths,
-        ...guestPath.paths,
-        ...rsvpPath.paths,
-        ...galleryPath.paths,
-        ...analyticsPath.paths,
-        ...publicPath.paths,
-        ...adminPath.paths,
-      };
-      (req as any).swaggerDoc = swagger;
-      next();
-    },
-    swaggerUi.setup(),
-  );
+    expressApp.use('/api/docs', swaggerUi.serve);
+    expressApp.get(
+        '/api/docs',
+        (req: Request, _res: Response, next: NextFunction) => {
+            const swagger: SwaggerModel = { ...getSwaggerBase() };
+            swagger.paths = {
+                ...authPath.paths,
+                ...invitationPath.paths,
+                ...guestPath.paths,
+                ...rsvpPath.paths,
+                ...galleryPath.paths,
+                ...analyticsPath.paths,
+                ...publicPath.paths,
+                ...adminPath.paths
+            };
+            (req as any).swaggerDoc = swagger;
+            next();
+        },
+        swaggerUi.setup()
+    );
 }

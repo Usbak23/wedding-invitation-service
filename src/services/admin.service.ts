@@ -4,30 +4,30 @@ import { AdminInvitationRepository } from '../repositories/admin-invitation.repo
 
 @Injectable()
 export class AdminService {
-  constructor(
-    private readonly userRepo: AdminUserRepository,
-    private readonly invitationRepo: AdminInvitationRepository,
-  ) {}
+    constructor(
+        private readonly userRepo: AdminUserRepository,
+        private readonly invitationRepo: AdminInvitationRepository
+    ) {}
 
-  getUsers() {
-    return this.userRepo.findAll();
-  }
+    getUsers() {
+        return this.userRepo.findAll();
+    }
 
-  deleteUser(id: string) {
-    return this.userRepo.delete(id);
-  }
+    deleteUser(id: string) {
+        return this.userRepo.delete(id);
+    }
 
-  getInvitations() {
-    return this.invitationRepo.findAll();
-  }
+    getInvitations() {
+        return this.invitationRepo.findAll();
+    }
 
-  async getDashboard() {
-    const [totalUsers, totalInvitations, published, draft] = await Promise.all([
-      this.userRepo.count(),
-      this.invitationRepo.count(),
-      this.invitationRepo.countByStatus('published'),
-      this.invitationRepo.countByStatus('draft'),
-    ]);
-    return { totalUsers, totalInvitations, published, draft };
-  }
+    async getDashboard() {
+        const [totalUsers, totalInvitations, published, draft] = await Promise.all([
+            this.userRepo.count(),
+            this.invitationRepo.count(),
+            this.invitationRepo.countByStatus('published'),
+            this.invitationRepo.countByStatus('draft')
+        ]);
+        return { totalUsers, totalInvitations, published, draft };
+    }
 }
