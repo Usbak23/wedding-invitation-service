@@ -14,9 +14,7 @@ const logFormat = format.combine(
     })
 );
 
-const loggerTransports: any[] = [
-    new transports.Console({ format: logFormat })
-];
+const loggerTransports: any[] = [new transports.Console({ format: logFormat })];
 
 if (!isServerless) {
     loggerTransports.push(
