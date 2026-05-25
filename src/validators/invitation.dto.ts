@@ -72,6 +72,26 @@ export class CreateInvitationDto {
     @IsUrl()
     bride_photo?: string;
 
+    @ApiPropertyOptional({ example: 'Putra pertama dari Bapak ... dan Ibu ...' })
+    @IsOptional()
+    @IsString()
+    groom_bio?: string;
+
+    @ApiPropertyOptional({ example: 'Putri kelima dari Bapak ... dan Ibu ...' })
+    @IsOptional()
+    @IsString()
+    bride_bio?: string;
+
+    @ApiPropertyOptional({ example: 'username_instagram' })
+    @IsOptional()
+    @IsString()
+    groom_instagram?: string;
+
+    @ApiPropertyOptional({ example: 'username_instagram' })
+    @IsOptional()
+    @IsString()
+    bride_instagram?: string;
+
     @ApiPropertyOptional({
         example: 'Bersama keluarga besar kami mengundang kehadiran Anda'
     })

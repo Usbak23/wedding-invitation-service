@@ -68,6 +68,18 @@ export class Invitation {
     @Column({ nullable: true })
     bride_photo: string;
 
+    @Column({ nullable: true, type: 'text' })
+    groom_bio: string;
+
+    @Column({ nullable: true, type: 'text' })
+    bride_bio: string;
+
+    @Column({ nullable: true, length: 100 })
+    groom_instagram: string;
+
+    @Column({ nullable: true, length: 100 })
+    bride_instagram: string;
+
     @OneToMany(() => Guest, (guest) => guest.invitation)
     guests: Guest[];
 
