@@ -21,8 +21,14 @@ export class Invitation {
     @Column({ length: 100 })
     groom_name: string;
 
+    @Column({ nullable: true, length: 100 })
+    groom_nickname: string;
+
     @Column({ length: 100 })
     bride_name: string;
+
+    @Column({ nullable: true, length: 100 })
+    bride_nickname: string;
 
     @Column({ nullable: true })
     akad_date: Date;
@@ -55,6 +61,12 @@ export class Invitation {
 
     @Column({ nullable: true, type: 'text' })
     custom_message: string;
+
+    @Column({ nullable: true })
+    groom_photo: string;
+
+    @Column({ nullable: true })
+    bride_photo: string;
 
     @OneToMany(() => Guest, (guest) => guest.invitation)
     guests: Guest[];
