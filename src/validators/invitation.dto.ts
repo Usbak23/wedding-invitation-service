@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CreateInvitationDto {
@@ -34,7 +34,7 @@ export class CreateInvitationDto {
 
     @ApiPropertyOptional({ example: 'https://maps.google.com/?q=...' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     akad_maps_url?: string;
 
     @ApiPropertyOptional({ example: '2026-06-01T11:00:00Z' })
@@ -49,27 +49,27 @@ export class CreateInvitationDto {
 
     @ApiPropertyOptional({ example: 'https://maps.google.com/?q=...' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     resepsi_maps_url?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/photo.jpg' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     cover_photo?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/music.mp3' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     music_url?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/groom.jpg' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     groom_photo?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/bride.jpg' })
     @IsOptional()
-    @IsUrl()
+    @IsString()
     bride_photo?: string;
 
     @ApiPropertyOptional({ example: 'Putra pertama dari Bapak ... dan Ibu ...' })

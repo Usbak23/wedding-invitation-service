@@ -26,6 +26,8 @@
     "migration:revert": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:revert -d src/configs/typeorm.datasource.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1055.0",
+    "@aws-sdk/s3-request-presigner": "^3.1055.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
@@ -45,6 +47,7 @@
     "dotenv": "^17.4.2",
     "helmet": "^8.1.0",
     "multer": "^2.1.1",
+    "multer-s3": "3.0.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.20.0",
@@ -67,6 +70,7 @@
     "@types/mocha": "^10.0.10",
     "@types/ms": "^2.1.0",
     "@types/multer": "^2.1.0",
+    "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.0.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.2.0",

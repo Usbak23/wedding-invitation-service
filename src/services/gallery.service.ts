@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { GalleryRepository } from '../repositories/gallery.repository';
 import { InvitationRepository } from '../repositories/invitation.repository';
+import { deleteFile, getFileUrl } from '../integrations/storage.integration';
 
 @Injectable()
 export class GalleryService {
@@ -20,11 +21,11 @@ export class GalleryService {
         if (!invitation) throw new NotFoundException('Invitation not found');
 
         const existing = await this.galleryRepo.findAllByInvitation(invitationId);
+        const fileKey = (file as any).key as string;
 
         return this.galleryRepo.create({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitationId } as any,
-            photo_url: `/uploads/${file.filename}`,
+            photo_url: getFileUrl(fileKey),
             caption,
             order_index: existing.length
         });
@@ -37,6 +38,10 @@ export class GalleryService {
         const invitation = await this.invitationRepo.findByIdAndUser(gallery.invitation.id, userId);
         if (!invitation) throw new NotFoundException('Invitation not found');
 
+        // Extract key from URL
+        const url = gallery.photo_url;
+        const key = url.split('/').slice(-2).join('/');
+        await deleteFile(key).catch(() => {});
         await this.galleryRepo.delete(id);
     }
 }
