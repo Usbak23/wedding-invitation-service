@@ -39,17 +39,22 @@ import { AdminModule } from './routes/admin.module';
         ]),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                type: 'postgres',
-                host: config.get('database.host'),
-                port: config.get('database.port'),
-                username: config.get('database.username'),
-                password: config.get('database.password'),
-                database: config.get('database.name'),
-                entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic, BankAccount],
-                synchronize: config.get('app.env') !== 'production',
-                logging: false
-            })
+            useFactory: (config: ConfigService) => {
+                const isProduction = config.get('app.env') === 'production';
+                return {
+                    type: 'postgres' as const,
+                    host: config.get<string>('database.host'),
+                    port: config.get<number>('database.port'),
+                    username: config.get<string>('database.username'),
+                    password: config.get<string>('database.password'),
+                    database: config.get<string>('database.name'),
+                    entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic, BankAccount],
+                    synchronize: !isProduction,
+                    migrationsRun: isProduction,
+                    migrations: isProduction ? ['build/migrations/*.js'] : [],
+                    logging: false,
+                };
+            }
         }),
         AuthModule,
         InvitationModule,
