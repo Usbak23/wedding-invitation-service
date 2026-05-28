@@ -14,6 +14,7 @@ import { Guest } from './models/guest.model';
 import { Rsvp } from './models/rsvp.model';
 import { Gallery } from './models/gallery.model';
 import { Analytic } from './models/analytic.model';
+import { BankAccount } from './models/bank-account.model';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './routes/auth.module';
 import { InvitationModule } from './routes/invitation.module';
@@ -45,7 +46,7 @@ import { AdminModule } from './routes/admin.module';
                 username: config.get('database.username'),
                 password: config.get('database.password'),
                 database: config.get('database.name'),
-                entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic],
+                entities: [User, Invitation, Guest, Rsvp, Gallery, Analytic, BankAccount],
                 synchronize: config.get('app.env') !== 'production',
                 logging: false
             })

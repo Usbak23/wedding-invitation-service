@@ -35,7 +35,7 @@ export class InvitationRepository {
     findBySlug(slug: string) {
         return this.repo.findOne({
             where: { slug },
-            relations: ['galleries']
+            relations: ['galleries', 'bankAccounts']
         });
     }
 

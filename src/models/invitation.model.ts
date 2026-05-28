@@ -3,6 +3,7 @@ import type { InvitationStatus } from '../types/invitation-status.type';
 import { User } from './user.model';
 import { Guest } from './guest.model';
 import { Gallery } from './gallery.model';
+import { BankAccount } from './bank-account.model';
 
 @Entity('invitations')
 @Index(['slug'])
@@ -85,6 +86,9 @@ export class Invitation {
 
     @OneToMany(() => Gallery, (gallery) => gallery.invitation)
     galleries: Gallery[];
+
+    @OneToMany(() => BankAccount, (ba) => ba.invitation)
+    bankAccounts: BankAccount[];
 
     @CreateDateColumn()
     created_at: Date;
