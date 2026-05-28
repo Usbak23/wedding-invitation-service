@@ -10,7 +10,7 @@ export const multerConfig = {
             cb(null, `${unique}${extname(file.originalname)}`);
         }
     }),
-    fileFilter: (_: any, file: Express.Multer.File, cb: any) => {
+    fileFilter: (_: unknown, file: Express.Multer.File, cb: (error: Error | null, acceptFile: boolean) => void) => {
         const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
         if (!allowed.includes(extname(file.originalname).toLowerCase())) {
             return cb(new BadRequestException('Only image files are allowed'), false);

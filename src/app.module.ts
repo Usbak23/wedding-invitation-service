@@ -53,7 +53,7 @@ import { AdminModule } from './routes/admin.module';
                     synchronize: !isProduction,
                     migrationsRun: isProduction,
                     migrations: isProduction ? ['build/migrations/*.js'] : [],
-                    logging: false,
+                    logging: false
                 };
             }
         }),

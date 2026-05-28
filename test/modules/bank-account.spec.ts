@@ -30,11 +30,7 @@ describe('BankAccountService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                BankAccountService,
-                { provide: BankAccountRepository, useValue: mockBankAccountRepo },
-                { provide: InvitationRepository, useValue: mockInvitationRepo }
-            ]
+            providers: [BankAccountService, { provide: BankAccountRepository, useValue: mockBankAccountRepo }, { provide: InvitationRepository, useValue: mockInvitationRepo }]
         }).compile();
 
         service = module.get<BankAccountService>(BankAccountService);

@@ -35,6 +35,7 @@ export class InvitationService {
             akad_date: dto.akad_date ? new Date(dto.akad_date) : undefined,
             resepsi_date: dto.resepsi_date ? new Date(dto.resepsi_date) : undefined,
             slug: `draft-${Date.now()}`,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             user: { id: userId } as any
         });
     }

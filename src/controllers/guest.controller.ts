@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GuestService } from '../services/guest.service';
 import { CreateGuestDto, BulkCreateGuestDto } from '../validators/guest.dto';
@@ -16,21 +17,21 @@ export class GuestController {
 
     @Get()
     @ApiOperation({ summary: 'List semua tamu undangan' })
-    async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Query() pagination: PaginationDto, @Req() req: any) {
+    async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Query() pagination: PaginationDto, @Req() req: Request & { user: { id: string } }) {
         const data = await this.guestService.findAll(invitationId, req.user.id, pagination);
         return successResponse(data);
     }
 
     @Post()
     @ApiOperation({ summary: 'Tambah tamu baru' })
-    async create(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: CreateGuestDto, @Req() req: any) {
+    async create(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: CreateGuestDto, @Req() req: Request & { user: { id: string } }) {
         const data = await this.guestService.create(invitationId, dto, req.user.id);
         return successResponse(data, 'Guest added');
     }
 
     @Post('bulk')
     @ApiOperation({ summary: 'Tambah banyak tamu sekaligus' })
-    async bulkCreate(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: BulkCreateGuestDto, @Req() req: any) {
+    async bulkCreate(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: BulkCreateGuestDto, @Req() req: Request & { user: { id: string } }) {
         const data = await this.guestService.bulkCreate(invitationId, dto, req.user.id);
         return successResponse(data, `${data.length} guests added`);
     }

@@ -19,7 +19,8 @@ export class AuthService {
         const hashed = await bcrypt.hash(dto.password, 10);
         const user = await this.userRepo.create({ ...dto, password: hashed });
 
-        const { password, ...result } = user;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _, ...result } = user;
         return result;
     }
 
@@ -41,7 +42,8 @@ export class AuthService {
     async me(userId: string) {
         const user = await this.userRepo.findById(userId);
         if (!user) throw new UnauthorizedException();
-        const { password, ...result } = user;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _pwd, ...result } = user;
         return result;
     }
 

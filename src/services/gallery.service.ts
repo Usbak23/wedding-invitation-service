@@ -22,6 +22,7 @@ export class GalleryService {
         const existing = await this.galleryRepo.findAllByInvitation(invitationId);
 
         return this.galleryRepo.create({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitationId } as any,
             photo_url: `/uploads/${file.filename}`,
             caption,

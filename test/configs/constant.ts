@@ -45,7 +45,7 @@ export const mockRsvp = {
     created_at: new Date('2026-01-01')
 };
 
-export const mockReq = {
+export const mockReq: { ip: string; headers: Record<string, string> } = {
     ip: '127.0.0.1',
     headers: { 'user-agent': 'jest-test' }
-} as any;
+};

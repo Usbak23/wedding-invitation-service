@@ -1,4 +1,4 @@
-import { ConsoleLogger, LogLevel } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { fileLogger } from '../services/logger.service';
 
 export class AppLogger extends ConsoleLogger {

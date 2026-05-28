@@ -29,6 +29,7 @@ export class GuestService {
         return this.guestRepo.create({
             ...dto,
             code: generateGuestCode(),
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitationId } as any
         });
     }
@@ -41,6 +42,7 @@ export class GuestService {
             let code = generateGuestCode();
             while (codes.has(code)) code = generateGuestCode();
             codes.add(code);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             return { ...g, code, invitation: { id: invitationId } as any };
         });
         return this.guestRepo.bulkCreate(guests);

@@ -11,5 +11,5 @@ export default new DataSource({
     password: process.env.DB_PASSWORD ?? 'postgres',
     database: process.env.DB_NAME ?? 'wedding_invitation',
     entities: ['src/models/*.ts'],
-    migrations: ['src/migrations/*.ts'],
+    migrations: ['src/migrations/*.ts']
 });

@@ -18,6 +18,7 @@ export class PublicService {
             throw new NotFoundException('Invitation not found');
         }
         await this.analyticRepo.create({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitation.id } as any,
             event: 'view',
             ip_address: req.ip,

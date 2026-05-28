@@ -37,6 +37,6 @@ export class AdminInvitationRepository {
     }
 
     countByStatus(status: string) {
-        return this.repo.count({ where: { status: status as any } });
+        return this.repo.count({ where: { status: status as 'draft' | 'published' } });
     }
 }

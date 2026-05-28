@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AnalyticsService } from '../services/analytics.service';
 import { JwtAuthGuard } from '../middlewares/jwt-auth.guard';
@@ -13,7 +14,7 @@ export class AnalyticsController {
 
     @Post('track/:invitationId')
     @ApiOperation({ summary: 'Track event undangan (public)' })
-    async track(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: CreateAnalyticDto, @Req() req: any) {
+    async track(@Param('invitationId', ParseUuidPipe) invitationId: string, @Body() dto: CreateAnalyticDto, @Req() req: Request) {
         await this.analyticsService.track(invitationId, dto.event, req);
         return successResponse(null, 'Event tracked');
     }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RsvpRepository } from '../repositories/rsvp.repository';
 import { GuestRepository } from '../repositories/guest.repository';
 import { CreateRsvpDto } from '../validators/rsvp.dto';
@@ -27,7 +27,9 @@ export class RsvpService {
         }
 
         return this.rsvpRepo.create({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             guest: { id: dto.guest_id } as any,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: dto.invitation_id } as any,
             status: dto.status,
             total_persons: dto.total_persons ?? 1,

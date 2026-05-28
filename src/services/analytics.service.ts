@@ -8,6 +8,7 @@ export class AnalyticsService {
 
     track(invitationId: string, event: string, req: Request) {
         return this.analyticRepo.create({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitationId } as any,
             event,
             ip_address: req.ip,

@@ -7,7 +7,7 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 const cookieOrBearerExtractor = (req: Request): string | null => {
     // Try cookie first
-    if (req?.cookies?.access_token) return req.cookies.access_token;
+    if (req?.cookies?.access_token) return req.cookies.access_token as string;
     // Fallback to Bearer header
     return ExtractJwt.fromAuthHeaderAsBearerToken()(req);
 };

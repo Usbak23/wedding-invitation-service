@@ -37,7 +37,7 @@ export class RsvpRepository {
 
     countByInvitationAndStatus(invitationId: string, status: string) {
         return this.repo.count({
-            where: { invitation: { id: invitationId }, status: status as any }
+            where: { invitation: { id: invitationId }, status: status as 'hadir' | 'tidak' | 'mungkin' }
         });
     }
 

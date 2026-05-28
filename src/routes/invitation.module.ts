@@ -24,9 +24,6 @@ import { BankAccountController } from '../controllers/bank-account.controller';
 @Module({
     imports: [TypeOrmModule.forFeature([Invitation, Guest, Rsvp, Analytic, BankAccount])],
     controllers: [InvitationController, GuestController, RsvpController, PublicController, BankAccountController],
-    providers: [
-        InvitationService, GuestService, RsvpService, PublicService, BankAccountService,
-        InvitationRepository, GuestRepository, RsvpRepository, AnalyticRepository, BankAccountRepository,
-    ],
+    providers: [InvitationService, GuestService, RsvpService, PublicService, BankAccountService, InvitationRepository, GuestRepository, RsvpRepository, AnalyticRepository, BankAccountRepository]
 })
 export class InvitationModule {}

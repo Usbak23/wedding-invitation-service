@@ -8,9 +8,11 @@ const isServerless = process.env.VERCEL === '1' || process.env.APP_ENV === 'prod
 const logFormat = format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.printf(({ timestamp, level, message, context, stack }) => {
-        const ctx = context ? `[${context}]` : '';
-        const trace = stack ? `\n${stack}` : '';
-        return `${timestamp} ${level.toUpperCase()} ${ctx} ${message}${trace}`;
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        const ctx = context ? `[${String(context)}]` : '';
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        const trace = stack ? `\n${String(stack)}` : '';
+        return `${String(timestamp)} ${level.toUpperCase()} ${ctx} ${String(message)}${trace}`;
     })
 );
 

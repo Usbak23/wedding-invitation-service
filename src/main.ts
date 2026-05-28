@@ -15,6 +15,7 @@ const logger = new Logger('Bootstrap');
 
 async function ensureDatabase(): Promise<void> {
     const dbName = process.env.DB_NAME;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const client = new pg.Client({
         host: process.env.DB_HOST || 'localhost',
         port: parseInt(process.env.DB_PORT ?? '5432', 10),
@@ -23,17 +24,22 @@ async function ensureDatabase(): Promise<void> {
         database: 'postgres'
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await client.connect();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = $1`, [dbName]);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (res.rowCount === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         await client.query(`CREATE DATABASE "${dbName}"`);
         console.log(`[Database] "${dbName}" created successfully`);
     } else {
         console.log(`[Database] "${dbName}" already exists`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await client.end();
 }
 
@@ -69,4 +75,4 @@ async function bootstrap() {
     await app.listen(port);
     logger.log(`Application running on port ${port}`);
 }
-bootstrap();
+void bootstrap();

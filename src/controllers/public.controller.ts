@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PublicService } from '../services/public.service';
 import { successResponse } from '../helpers/response.helper';
@@ -10,7 +11,7 @@ export class PublicController {
 
     @Get(':slug')
     @ApiOperation({ summary: 'Halaman publik undangan berdasarkan slug' })
-    async getBySlug(@Param('slug') slug: string, @Req() req: any) {
+    async getBySlug(@Param('slug') slug: string, @Req() req: Request) {
         const data = await this.publicService.getBySlug(slug, req);
         return successResponse(data);
     }

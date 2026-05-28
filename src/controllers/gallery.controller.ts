@@ -1,4 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors, Body } from '@nestjs/common';
+import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { GalleryService } from '../services/gallery.service';
@@ -16,7 +17,7 @@ export class GalleryController {
 
     @Get()
     @ApiOperation({ summary: 'List foto gallery undangan' })
-    async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Req() req: any) {
+    async findAll(@Param('invitationId', ParseUuidPipe) invitationId: string, @Req() req: Request & { user: { id: string } }) {
         const data = await this.galleryService.findAll(invitationId, req.user.id);
         return successResponse(data);
     }
@@ -34,14 +35,19 @@ export class GalleryController {
         }
     })
     @UseInterceptors(FileInterceptor('photo', multerConfig))
-    async upload(@Param('invitationId', ParseUuidPipe) invitationId: string, @UploadedFile() file: Express.Multer.File, @Body('caption') caption: string, @Req() req: any) {
+    async upload(
+        @Param('invitationId', ParseUuidPipe) invitationId: string,
+        @UploadedFile() file: Express.Multer.File,
+        @Body('caption') caption: string,
+        @Req() req: Request & { user: { id: string } }
+    ) {
         const data = await this.galleryService.upload(invitationId, req.user.id, file, caption);
         return successResponse(data, 'Photo uploaded');
     }
 
     @Delete(':id')
     @ApiOperation({ summary: 'Hapus foto dari gallery' })
-    async delete(@Param('id', ParseUuidPipe) id: string, @Req() req: any) {
+    async delete(@Param('id', ParseUuidPipe) id: string, @Req() req: Request & { user: { id: string } }) {
         await this.galleryService.delete(id, req.user.id);
         return successResponse(null, 'Photo deleted');
     }

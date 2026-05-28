@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
@@ -43,7 +43,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
     @ApiOperation({ summary: 'Get data user yang sedang login' })
-    async me(@Req() req: any) {
+    async me(@Req() req: Request & { user: { id: string } }) {
         const data = await this.authService.me(req.user.id);
         return successResponse(data);
     }
@@ -52,7 +52,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
     @ApiOperation({ summary: 'Logout user' })
-    async logout(@Res({ passthrough: true }) res: Response) {
+    logout(@Res({ passthrough: true }) res: Response) {
         res.clearCookie('access_token', { path: '/' });
         const data = this.authService.logout();
         return successResponse(null, data.message);
