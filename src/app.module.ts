@@ -16,6 +16,7 @@ import { Gallery } from './models/gallery.model';
 import { Analytic } from './models/analytic.model';
 import { BankAccount } from './models/bank-account.model';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { HealthController } from './controllers/health.controller';
 import { AuthModule } from './routes/auth.module';
 import { InvitationModule } from './routes/invitation.module';
 import { GalleryModule } from './routes/gallery.module';
@@ -61,7 +62,8 @@ import { AdminModule } from './routes/admin.module';
         GalleryModule,
         AdminModule
     ],
-    providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }]
+    providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+    controllers: [HealthController]
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
