@@ -3,11 +3,13 @@ import { NotFoundException } from '@nestjs/common';
 import { PublicService } from '../../src/services/public.service';
 import { InvitationRepository } from '../../src/repositories/invitation.repository';
 import { GuestRepository } from '../../src/repositories/guest.repository';
+import { RsvpRepository } from '../../src/repositories/rsvp.repository';
 import { AnalyticRepository } from '../../src/repositories/analytic.repository';
 import { mockInvitation, mockGuest, mockReq } from '../configs/constant';
 
 const mockInvitationRepo = { findBySlug: jest.fn() };
 const mockGuestRepo = { findByCode: jest.fn() };
+const mockRsvpRepo = { findAllByInvitation: jest.fn() };
 const mockAnalyticRepo = { create: jest.fn() };
 
 describe('PublicService', () => {
@@ -19,6 +21,7 @@ describe('PublicService', () => {
                 PublicService,
                 { provide: InvitationRepository, useValue: mockInvitationRepo },
                 { provide: GuestRepository, useValue: mockGuestRepo },
+                { provide: RsvpRepository, useValue: mockRsvpRepo },
                 { provide: AnalyticRepository, useValue: mockAnalyticRepo }
             ]
         }).compile();
