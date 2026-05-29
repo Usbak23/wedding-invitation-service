@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Request } from 'express';
 import { InvitationRepository } from '../repositories/invitation.repository';
 import { GuestRepository } from '../repositories/guest.repository';
+import { RsvpRepository } from '../repositories/rsvp.repository';
 import { AnalyticRepository } from '../repositories/analytic.repository';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class PublicService {
     constructor(
         private readonly invitationRepo: InvitationRepository,
         private readonly guestRepo: GuestRepository,
+        private readonly rsvpRepo: RsvpRepository,
         private readonly analyticRepo: AnalyticRepository
     ) {}
 
@@ -37,5 +39,14 @@ export class PublicService {
             throw new NotFoundException('Guest not found');
         }
         return { invitation, guest };
+    }
+
+    async getRsvps(slug: string) {
+        const invitation = await this.invitationRepo.findBySlug(slug);
+        if (!invitation || invitation.status !== 'published') {
+            throw new NotFoundException('Invitation not found');
+        }
+        const { data } = await this.rsvpRepo.findAllByInvitation(invitation.id, { page: 1, limit: 100 });
+        return data;
     }
 }

@@ -22,4 +22,11 @@ export class PublicController {
         const data = await this.publicService.getGuestByCode(slug, code);
         return successResponse(data);
     }
+
+    @Get(':slug/rsvps')
+    @ApiOperation({ summary: 'List RSVP publik per undangan' })
+    async getRsvps(@Param('slug') slug: string) {
+        const data = await this.publicService.getRsvps(slug);
+        return successResponse(data);
+    }
 }
