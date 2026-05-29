@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Remove unnecessary files
+        run: rm -rf .git node_modules
+
       - name: Send files to server
         uses: appleboy/scp-action@v1
         with:
