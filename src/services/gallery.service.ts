@@ -21,9 +21,10 @@ export class GalleryService {
         if (!invitation) throw new NotFoundException('Invitation not found');
 
         const existing = await this.galleryRepo.findAllByInvitation(invitationId);
-        const fileKey = (file as any).key as string;
+        const fileKey = (file as unknown as { key: string }).key;
 
         return this.galleryRepo.create({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invitation: { id: invitationId } as any,
             photo_url: getFileUrl(fileKey),
             caption,

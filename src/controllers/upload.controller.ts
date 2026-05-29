@@ -16,12 +16,12 @@ export class UploadController {
     @ApiBody({
         schema: {
             type: 'object',
-            properties: { file: { type: 'string', format: 'binary' } },
-        },
+            properties: { file: { type: 'string', format: 'binary' } }
+        }
     })
     @UseInterceptors(FileInterceptor('file', multerConfig))
-    async upload(@UploadedFile() file: Express.Multer.File) {
-        const key = (file as any).key as string;
+    upload(@UploadedFile() file: Express.Multer.File) {
+        const key = (file as unknown as { key: string }).key;
         return successResponse({ url: getFileUrl(key) }, 'File uploaded');
     }
 }

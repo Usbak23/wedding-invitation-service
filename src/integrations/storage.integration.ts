@@ -8,9 +8,9 @@ export const s3Client = new S3Client({
     region: process.env.S3_REGION || 'us-east-1',
     credentials: {
         accessKeyId: process.env.S3_ACCESS_KEY || 'minioadmin',
-        secretAccessKey: process.env.S3_SECRET_KEY || 'minioadmin',
+        secretAccessKey: process.env.S3_SECRET_KEY || 'minioadmin'
     },
-    forcePathStyle: true, // required for MinIO
+    forcePathStyle: true // required for MinIO
 });
 
 const bucket = process.env.S3_BUCKET || 'wedding';
@@ -25,7 +25,7 @@ export const multerConfig = {
         key: (_, file, cb) => {
             const unique = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
             cb(null, `uploads/${unique}${extname(file.originalname)}`);
-        },
+        }
     }),
     fileFilter: (_: unknown, file: Express.Multer.File, cb: (error: Error | null, acceptFile: boolean) => void) => {
         const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.mp3', '.m4a', '.ogg', '.wav'];
@@ -34,7 +34,7 @@ export const multerConfig = {
         }
         cb(null, true);
     },
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB
 };
 
 export function getFileUrl(key: string): string {
