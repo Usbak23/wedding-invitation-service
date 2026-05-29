@@ -23,7 +23,7 @@ const mockGallery = {
     created_at: new Date('2026-01-01')
 };
 
-const mockFile = { filename: 'photo.jpg' } as Express.Multer.File;
+const mockFile = { filename: 'photo.jpg', key: 'uploads/photo.jpg' } as Express.Multer.File & { key: string };
 
 describe('GalleryService', () => {
     let service: GalleryService;
@@ -59,7 +59,7 @@ describe('GalleryService', () => {
             mockGalleryRepo.create.mockResolvedValue({ ...mockGallery, order_index: 1 });
 
             const result = await service.upload('inv-uuid-1', 'user-uuid-1', mockFile, 'caption');
-            expect(mockGalleryRepo.create).toHaveBeenCalledWith(expect.objectContaining({ photo_url: '/uploads/photo.jpg', order_index: 1 }));
+            expect(mockGalleryRepo.create).toHaveBeenCalledWith(expect.objectContaining({ photo_url: 'http://localhost:9000/wedding/uploads/photo.jpg', order_index: 1 }));
             expect(result.order_index).toBe(1);
         });
 
