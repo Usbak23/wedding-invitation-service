@@ -130,7 +130,8 @@ jobs:
               done < .env
             fi
 
-            export APP_IMAGE="ghcr.io/${{ github.repository }}:${IMAGE_TAG}"
+            REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            export APP_IMAGE="ghcr.io/${REPO_LOWER}:${IMAGE_TAG}"
 
             # 3. Jalankan migrasi DB otomatis sebelum container utama di-rolling update
             echo "==== Running Database Migration Check ===="
