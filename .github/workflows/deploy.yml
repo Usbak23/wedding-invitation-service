@@ -1,42 +1,170 @@
-name: CI/CD
+name: Deploy Wedding Invitation Service
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   test:
+    name: Lint & Automated Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
+          cache: 'npm'
 
-  deploy:
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Code Style
+        run: npm run lint
+
+      - name: Run Unit & Hardening Test Suites
+        run: npm test -- --no-watchman --maxWorkers=2
+
+  build-and-push:
+    name: Build & Push Docker Image
     needs: test
     runs-on: ubuntu-latest
-    environment: Production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Remove unnecessary files
-        run: rm -rf .git node_modules
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Send files to server
-        uses: appleboy/scp-action@v1
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: '.'
-          target: /home/mubarok/deploy-prod
-          overwrite: true
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=short,prefix=sha-
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-swarm:
+    name: Deploy to Docker Swarm Cluster
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Copy docker-stack.yml to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: 'docker-stack.yml'
+          target: '/home/${{ secrets.DEPLOY_USER }}/wedding-invitation'
+
+      - name: Execute Swarm Stack Deployment via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+          GHCR_PAT: ${{ secrets.GHCR_DEPLOY_TOKEN }}
+          ACTOR: ${{ github.actor }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          envs: IMAGE_TAG,GHCR_PAT,ACTOR
+          script: |
+            set -e
+
+            # 1. Login ke GHCR menggunakan PAT permanen
+            echo "$GHCR_PAT" | docker login ghcr.io -u "$ACTOR" --password-stdin
+
+            cd /home/${{ secrets.DEPLOY_USER }}/wedding-invitation
+            
+            # 2. Bersihkan karakter \r dan load file .env ke environment shell secara aman
+            if [ -f .env ]; then
+              sed -i 's/\r$//' .env
+              while IFS='=' read -r key value || [ -n "$key" ]; do
+                [[ "$key" =~ ^[[:space:]]*# ]] && continue
+                [[ -z "$key" ]] && continue
+                key=$(echo "$key" | xargs)
+                value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+                export "$key=$value"
+              done < .env
+            fi
+
+            export APP_IMAGE="ghcr.io/${{ github.repository }}:${IMAGE_TAG}"
+
+            # 3. Jalankan migrasi DB otomatis sebelum container utama di-rolling update
+            echo "==== Running Database Migration Check ===="
+            docker run --rm \
+              --network agilix_network \
+              --env-file /home/${{ secrets.DEPLOY_USER }}/wedding-invitation/.env \
+              "$APP_IMAGE" npm run migration:run:prod
+
+            # 4. Deploy update stack Swarm murni
+            echo "==== Deploying Updated Service Stack ===="
+            docker stack deploy -c docker-stack.yml --with-registry-auth wedding-service
+
+            # 5. Tunggu replika baru stabil
+            echo "==== Verifying Service Convergence ===="
+            SUCCESS=0
+            for i in {1..20}; do
+              REPLICAS=$(docker service ls --filter name=wedding-service_wedding-service --format "{{.Replicas}}")
+              echo "Replicas status: $REPLICAS (Checking $i/20)"
+              
+              CURRENT=$(echo "$REPLICAS" | cut -d'/' -f1)
+              TARGET=$(echo "$REPLICAS" | cut -d'/' -f2)
+              if [ -n "$CURRENT" ] && [ "$CURRENT" -eq "$TARGET" ] && [ "$CURRENT" -gt 0 ]; then
+                SUCCESS=1
+                break
+              fi
+              sleep 3
+            done
+
+            if [ $SUCCESS -ne 1 ]; then
+              echo "Deployment stabilization timed out!"
+              docker service ps wedding-service_wedding-service
+              exit 1
+            fi
+
+            # 6. Bersihkan image usang agar disk VPS tidak penuh
+            docker image prune -af --filter "until=72h"
+            echo "==== Deployment Successful with Zero-Downtime! ===="
